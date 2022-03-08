@@ -25,6 +25,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    DemoService demoService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +58,14 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        DemoService demoService = retrofit.create(DemoService.class);
+        demoService = retrofit.create(DemoService.class);
 
+
+
+        callDemo2();
+    }
+
+    private void callDemo1(){
         Call<Demo1> callApi1 = demoService.fetchDemo1();
 
         callApi1.enqueue(new Callback<Demo1>() {
@@ -77,9 +85,33 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Demo1> call, Throwable t) {
-
+                Log.d("BBB", t.getMessage());
             }
         });
+    }
 
+    private void callDemo2(){
+        Call<Demo2> callApi2 = demoService.fetchDemo2();
+
+        callApi2.enqueue(new Callback<Demo2>() {
+            @Override
+            public void onResponse(Call<Demo2> call, Response<Demo2> response) {
+                if (response.errorBody() != null){
+                    try {
+                        Log.d("BBB",response.errorBody().string());
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Demo2 demo2 = response.body();
+                Log.d("BBB",demo2.toString());
+            }
+
+            @Override
+            public void onFailure(Call<Demo2> call, Throwable t) {
+                Log.d("BBB", t.getMessage());
+            }
+        });
     }
 }

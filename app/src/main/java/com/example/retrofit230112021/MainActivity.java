@@ -1,11 +1,13 @@
 package com.example.retrofit230112021;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.retrofit230112021.demo1.Demo1;
+import com.example.retrofit230112021.demo2.Demo2;
+import com.example.retrofit230112021.demo3.Demo3;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -13,7 +15,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        callDemo2();
+        callDemo3();
     }
 
     private void callDemo1(){
@@ -110,6 +111,31 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Demo2> call, Throwable t) {
+                Log.d("BBB", t.getMessage());
+            }
+        });
+    }
+
+    private void callDemo3(){
+        Call<Demo3> callApi3 = demoService.fetchDemo3();
+
+        callApi3.enqueue(new Callback<Demo3>() {
+            @Override
+            public void onResponse(Call<Demo3> call, Response<Demo3> response) {
+                if (response.errorBody() != null){
+                    try {
+                        Log.d("BBB",response.errorBody().string());
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Demo3 demo3 = response.body();
+                Log.d("BBB",demo3.toString());
+            }
+
+            @Override
+            public void onFailure(Call<Demo3> call, Throwable t) {
                 Log.d("BBB", t.getMessage());
             }
         });

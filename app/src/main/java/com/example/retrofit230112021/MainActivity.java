@@ -1,19 +1,24 @@
 package com.example.retrofit230112021;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.example.retrofit230112021.demo1.Demo1;
 import com.example.retrofit230112021.demo2.Demo2;
 import com.example.retrofit230112021.demo3.Demo3;
+import com.example.retrofit230112021.demo5.Demo5;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -63,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        callDemo3();
+        callDemo5();
     }
 
     private void callDemo1(){
@@ -136,6 +141,37 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Demo3> call, Throwable t) {
+                Log.d("BBB", t.getMessage());
+            }
+        });
+    }
+
+    private void callDemo5(){
+        Call<List<Demo5>> callApi5 = demoService.fetchDemo5();
+
+        callApi5.enqueue(new Callback<List<Demo5>>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onResponse(Call<List<Demo5>> call, Response<List<Demo5>> response) {
+                if (response.errorBody() != null){
+                    try {
+                        Log.d("BBB",response.errorBody().string());
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                List<Demo5> demo5 = response.body();
+                demo5.forEach(new Consumer<Demo5>() {
+                    @Override
+                    public void accept(Demo5 demo5) {
+                        Log.d("BBB",demo5.toString());
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<List<Demo5>> call, Throwable t) {
                 Log.d("BBB", t.getMessage());
             }
         });
